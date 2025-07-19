@@ -7,6 +7,8 @@ src/shared_services.egg-info/dependency_links.txt
 src/shared_services.egg-info/requires.txt
 src/shared_services.egg-info/top_level.txt
 src/shared_services/common/__init__.py
+src/shared_services/config/__init__.py
+src/shared_services/config/config_manager.py
 src/shared_services/infrastructure/__init__.py
 src/shared_services/infrastructure/automated_scaling.py
 src/shared_services/infrastructure/bq_writer.py
