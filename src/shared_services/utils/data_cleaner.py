@@ -26,7 +26,9 @@ def clean_ohlcv_data(df: pd.DataFrame) -> pd.DataFrame:
     return clean_and_impute_data(df)
 
 
-def clean_data(df: pd.DataFrame, columns_to_clean: list = None, method: str = 'ffill') -> pd.DataFrame:
+def clean_data(
+    df: pd.DataFrame, columns_to_clean: list = None, method: str = "ffill"
+) -> pd.DataFrame:
     """
     General purpose data cleaning function.
 
@@ -48,13 +50,13 @@ def clean_data(df: pd.DataFrame, columns_to_clean: list = None, method: str = 'f
         columns_to_clean = df.columns
 
     # Apply cleaning method
-    if method == 'ffill':
+    if method == "ffill":
         df[columns_to_clean] = df[columns_to_clean].ffill()
-    elif method == 'bfill':
+    elif method == "bfill":
         df[columns_to_clean] = df[columns_to_clean].bfill()
-    elif method == 'interpolate':
+    elif method == "interpolate":
         df[columns_to_clean] = df[columns_to_clean].interpolate()
-    elif method == 'drop':
+    elif method == "drop":
         df = df.dropna(subset=columns_to_clean)
 
     return df

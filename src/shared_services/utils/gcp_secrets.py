@@ -426,7 +426,9 @@ def get_kite_access_token() -> Optional[str]:
     return get_secret_or_env("kite-access-token", "KITE_ACCESS_TOKEN")
 
 
-def get_secret(secret_name: str, version: str = "latest", project_id: Optional[str] = None) -> str:
+def get_secret(
+    secret_name: str, version: str = "latest", project_id: Optional[str] = None
+) -> str:
     """
     Retrieve a secret from GCP Secret Manager.
 
@@ -442,7 +444,9 @@ def get_secret(secret_name: str, version: str = "latest", project_id: Optional[s
     return secret_mgr.get_secret(secret_name, version)
 
 
-def set_secret(secret_name: str, secret_value: str, project_id: Optional[str] = None) -> str:
+def set_secret(
+    secret_name: str, secret_value: str, project_id: Optional[str] = None
+) -> str:
     """
     Add or update a secret in GCP Secret Manager.
 

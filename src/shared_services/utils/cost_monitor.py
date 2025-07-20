@@ -693,18 +693,20 @@ def monitor_costs(config: Union[CostMonitorConfig, Dict[str, Any]]) -> Dict[str,
         # Convert dict to CostMonitorConfig
         thresholds = []
         for t in config.get("thresholds", []):
-            thresholds.append(CostThreshold(
-                type=CostThresholdType(t["type"]),
-                value=t["value"],
-                notification_channels=t.get("notification_channels")
-            ))
+            thresholds.append(
+                CostThreshold(
+                    type=CostThresholdType(t["type"]),
+                    value=t["value"],
+                    notification_channels=t.get("notification_channels"),
+                )
+            )
 
             config = CostMonitorConfig(
                 project_id=config["project_id"],
                 billing_account_id=config.get("billing_account_id"),
                 thresholds=thresholds,
                 check_frequency_hours=config.get("check_frequency_hours", 24),
-                last_check=config.get("last_check")
+                last_check=config.get("last_check"),
             )
 
         # Get current costs

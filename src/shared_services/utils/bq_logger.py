@@ -3,9 +3,11 @@ import json
 from typing import Any, Dict, List, Optional
 
 
-def ensure_bq_dataset_and_table(dataset_id: str = "trading_data", 
-                               table_id: str = "backtest_results",
-                               schema: Optional[List[bigquery.SchemaField]] = None):
+def ensure_bq_dataset_and_table(
+    dataset_id: str = "trading_data",
+    table_id: str = "backtest_results",
+    schema: Optional[List[bigquery.SchemaField]] = None,
+):
     client = bigquery.Client()
     full_dataset_id = f"{client.project}.{dataset_id}"
     full_table_id = f"{full_dataset_id}.{table_id}"
@@ -43,30 +45,32 @@ def log_backtest_result(**kwargs):
     return errors
 
 
-def log_to_bigquery(data: Dict[str, Any], 
-                   table_id: str = "budget_alerts", 
-                   dataset_id: str = "audit_trail", 
-                   project_id: Optional[str] = None) -> List[Dict[str, Any]]:
+def log_to_bigquery(
+    data: Dict[str, Any],
+    table_id: str = "budget_alerts",
+    dataset_id: str = "audit_trail",
+    project_id: Optional[str] = None,
+) -> List[Dict[str, Any]]:
     """
     Log data to BigQuery for analysis and auditing.
-    
+
     Args:
         data: Dictionary or list of dictionaries containing the data to log.
         table_id: The BigQuery table ID.
         dataset_id: The BigQuery dataset ID (default: audit_trail).
         project_id: The GCP project ID. If None, uses the default project from credentials.
-        
+
     Returns:
         List of errors, if any. Empty list means success.
     """
     client = bigquery.Client(project=project_id)
-    
+
     # Convert to list if it's a single dict
     rows_to_insert = [data] if isinstance(data, dict) else data
-    
+
     # Format table ID with project and dataset
     full_table_id = f"{client.project}.{dataset_id}.{table_id}"
-    
+
     try:
         errors = client.insert_rows_json(full_table_id, rows_to_insert)
         if errors:
@@ -77,14 +81,16 @@ def log_to_bigquery(data: Dict[str, Any],
         return [{"error": str(e)}]
 
 
-def log_budget_alert(budget_data: Dict[str, Any], actions_taken: List[str]) -> List[Dict[str, Any]]:
+def log_budget_alert(
+    budget_data: Dict[str, Any], actions_taken: List[str]
+) -> List[Dict[str, Any]]:
     """
     Log budget alert data to BigQuery.
-    
+
     Args:
         budget_data: Dictionary containing budget alert data.
         actions_taken: List of actions taken in response to the budget alert.
-        
+
     Returns:
         List of errors, if any. Empty list means success.
     """
@@ -101,7 +107,7 @@ def log_budget_alert(budget_data: Dict[str, Any], actions_taken: List[str]) -> L
             else "warning"
         ),
     }
-    
+
     schema = [
         bigquery.SchemaField("timestamp", "TIMESTAMP"),
         bigquery.SchemaField("budget_name", "STRING"),
@@ -111,6 +117,6 @@ def log_budget_alert(budget_data: Dict[str, Any], actions_taken: List[str]) -> L
         bigquery.SchemaField("actions_taken", "STRING"),
         bigquery.SchemaField("severity", "STRING"),
     ]
-    
+
     ensure_bq_dataset_and_table("audit_trail", "budget_alerts", schema)
     return log_to_bigquery(row, "budget_alerts", "audit_trail")

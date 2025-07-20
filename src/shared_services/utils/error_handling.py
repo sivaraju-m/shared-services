@@ -239,7 +239,9 @@ def require_config(config_key: str, config_dict: dict[str, Any]) -> Any:
     return config_dict[config_key]
 
 
-def handle_error(error: Exception, component: str = "unknown", context: dict = None) -> TradingSystemError:
+def handle_error(
+    error: Exception, component: str = "unknown", context: dict = None
+) -> TradingSystemError:
     """
     Standardized error handling function that converts any exception to TradingSystemError
     with proper context and logging
@@ -247,10 +249,10 @@ def handle_error(error: Exception, component: str = "unknown", context: dict = N
     context = context or {}
     logger.error(f"Error in {component}: {str(error)}")
     logger.error(f"Context: {context}")
-    
+
     if isinstance(error, TradingSystemError):
         return error
-    
+
     # Determine severity based on error type
     if isinstance(error, (ValueError, TypeError, KeyError)):
         severity = ErrorSeverity.MEDIUM
@@ -258,12 +260,9 @@ def handle_error(error: Exception, component: str = "unknown", context: dict = N
         severity = ErrorSeverity.HIGH
     else:
         severity = ErrorSeverity.MEDIUM
-        
+
     return TradingSystemError(
-        message=str(error),
-        severity=severity,
-        component=component,
-        context=context
+        message=str(error), severity=severity, component=component, context=context
     )
 
 
@@ -272,7 +271,7 @@ def retry_on_error(max_attempts: int = 3, delay_seconds: int = 1):
     Decorator that retries a function on failure
     """
     import time
-    
+
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -286,13 +285,14 @@ def retry_on_error(max_attempts: int = 3, delay_seconds: int = 1):
                     if attempt < max_attempts:
                         logger.info(f"Retrying in {delay_seconds} seconds...")
                         time.sleep(delay_seconds)
-            
+
             # If we get here, all attempts failed
             raise handle_error(
-                last_error, 
+                last_error,
                 component=func.__name__,
-                context={"args": args, "kwargs": kwargs, "attempts": max_attempts}
+                context={"args": args, "kwargs": kwargs, "attempts": max_attempts},
             )
-            
+
         return wrapper
+
     return decorator
